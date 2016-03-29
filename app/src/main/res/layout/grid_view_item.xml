@@ -14,8 +14,8 @@
     <LinearLayout
         android:id="@+id/description_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:alpha="0"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite"
         android:orientation="vertical">
 
         <TextView
@@ -30,58 +30,34 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorWhite"
             android:gravity="center"
             android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
+            <LinearLayout style="@style/likes_view_layout_style">
 
                 <TextView
                     android:id="@+id/name_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="4dp"
+                    style="@style/likes_views_label_style"
                     android:text="Likes" />
 
                 <TextView
                     android:id="@+id/name_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="567"
-                    android:textColor="@color/colorPrimaryText"
-                    android:textSize="16dp" />
+                    style="@style/likes_views_text_style"
+                    android:text="567" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
+            <LinearLayout style="@style/likes_view_layout_style">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/likes_views_label_style"
+
                     android:layout_below="@+id/name_label"
-                    android:gravity="center"
-                    android:padding="4dp"
                     android:text="Views" />
 
                 <TextView
                     android:id="@+id/views_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="1034"
-                    android:textColor="@color/colorPrimaryText"
-                    android:textSize="16dp" />
+                    style="@style/likes_views_text_style"
+                    android:text="1034" />
             </LinearLayout>
 
 
