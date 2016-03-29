@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gallery.app.MainActivity;
@@ -45,13 +46,10 @@ public class GridViewAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
 
         view = inflater.inflate(R.layout.grid_view_item, null);
-        String text = dataList.get(i);
         int height = mContext.getResources().getDimensionPixelSize(R.dimen.grid_view_height);
         view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, height));
-        TextView textView = (TextView) view.findViewById(R.id.label);
-        TextView textView2 = (TextView) view.findViewById(R.id.label2);
+        ImageView textView = (ImageView) view.findViewById(R.id.label);
         textView.setTag(MainActivity.FRONT_SIDE);
-        textView.setText(text);
         return view;
     }
 }

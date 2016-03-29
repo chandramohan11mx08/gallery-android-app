@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 View label1 = view.findViewById(R.id.label);
-                View label2 = view.findViewById(R.id.label2);
+                View label2 = view.findViewById(R.id.description_layout);
                 int mode = (int) label1.getTag();
                 if (mode == FRONT_SIDE) {
                     setRightIn.setTarget(label2);
