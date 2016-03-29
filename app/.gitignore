@@ -1,0 +1,8 @@
+/build
+*.iml
+.idea/
+*.swp
+target/
+.DS_Store
+tmp/
+.gradle
