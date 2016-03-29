@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
 
+import com.gallery.app.MainActivity;
 import com.gallery.app.R;
 
 import java.util.List;
@@ -17,8 +19,6 @@ public class GridViewAdapter extends BaseAdapter {
     private Context mContext;
     private List<String> dataList;
     LayoutInflater inflater;
-
-    TextView textView;
 
     public GridViewAdapter(Context c, List<String> sentDays) {
         mContext = c;
@@ -46,7 +46,11 @@ public class GridViewAdapter extends BaseAdapter {
 
         view = inflater.inflate(R.layout.grid_view_item, null);
         String text = dataList.get(i);
-        textView = (TextView) view.findViewById(R.id.label);
+        int height = mContext.getResources().getDimensionPixelSize(R.dimen.grid_view_height);
+        view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, height));
+        TextView textView = (TextView) view.findViewById(R.id.label);
+        TextView textView2 = (TextView) view.findViewById(R.id.label2);
+        textView.setTag(MainActivity.FRONT_SIDE);
         textView.setText(text);
         return view;
     }
