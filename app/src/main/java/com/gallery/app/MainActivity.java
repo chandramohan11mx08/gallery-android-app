@@ -38,6 +38,21 @@ public class MainActivity extends AppCompatActivity {
         stringList.add("3");
         stringList.add("4");
         stringList.add("5");
+        stringList.add("1");
+        stringList.add("2");
+        stringList.add("3");
+        stringList.add("4");
+        stringList.add("5");
+        stringList.add("1");
+        stringList.add("2");
+        stringList.add("3");
+        stringList.add("4");
+        stringList.add("5");
+        stringList.add("1");
+        stringList.add("2");
+        stringList.add("3");
+        stringList.add("4");
+
 
         setLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(this,
                 R.animator.card_flip_left_in);
