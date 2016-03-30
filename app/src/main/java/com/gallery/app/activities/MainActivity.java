@@ -1,4 +1,4 @@
-package com.gallery.app;
+package com.gallery.app.activities;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.gallery.app.R;
 import com.gallery.app.adapters.GridViewAdapter;
 import com.gallery.app.constants.AppConstants;
 import com.gallery.app.models.Photo;
