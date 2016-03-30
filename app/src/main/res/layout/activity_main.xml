@@ -6,6 +6,12 @@
     android:orientation="vertical"
     tools:context="com.gallery.app.MainActivity">
 
+    <Button
+        android:id="@+id/search"
+        android:text="search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <GridView
         android:id="@+id/grid_view"
         android:layout_width="match_parent"

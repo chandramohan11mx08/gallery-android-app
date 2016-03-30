@@ -2,14 +2,18 @@ package com.gallery.app;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.gallery.app.adapters.GridViewAdapter;
+import com.gallery.app.constants.AppConstants;
+import com.gallery.app.services.FlickrApiIntentService;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
@@ -28,6 +32,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int FRONT_SIDE = 1;
     public static final int BACK_SIDE = 2;
+
+    @Click(R.id.search)
+    public void search() {
+        Intent intent = new Intent(this, FlickrApiIntentService.class);
+        intent.putExtra(AppConstants.PAGE_NUM, 1);
+        intent.putExtra(AppConstants.SEARCH_TEXT, "birds");
+        startService(intent);
+    }
 
     @AfterViews
     public void init() {
