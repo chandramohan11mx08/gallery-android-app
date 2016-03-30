@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -36,9 +37,11 @@ public class MainActivity extends AppCompatActivity {
 
     List<Photo> photos = new ArrayList<>();
     GridViewAdapter gridViewAdapter;
-
+    int pageNumber = 0;
     EventBus eventBus = EventBus.getDefault();
     Context context;
+
+    int prevIndex = 0;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -54,8 +57,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Click(R.id.search)
     public void search() {
+        resetSearchContext();
+        callPhotosSearchApi();
+    }
+
+    public void resetSearchContext() {
+        photos.clear();
+        pageNumber = 1;
+        prevIndex = 0;
+    }
+
+    public void callPhotosSearchApi() {
         Intent intent = new Intent(this, FlickrApiIntentService.class);
-        intent.putExtra(AppConstants.PAGE_NUM, 1);
+        intent.putExtra(AppConstants.PAGE_NUM, pageNumber);
         intent.putExtra(AppConstants.SEARCH_TEXT, "birds");
         startService(intent);
     }
@@ -66,42 +80,70 @@ public class MainActivity extends AppCompatActivity {
         gridViewAdapter = new GridViewAdapter(this, photos);
         gridView.setAdapter(gridViewAdapter);
 
+        setClickListenerForGridItem();
+        setScrollListenerForGridView();
+    }
+
+    private void setScrollListenerForGridView() {
+        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int i = firstVisibleItem + visibleItemCount;
+                if (prevIndex == i) {
+                    return;
+                }
+
+                boolean isEndReached = (i == (totalItemCount - 20));
+                if (isEndReached && pageNumber != 0) {
+                    pageNumber++;
+                    callPhotosSearchApi();
+                    prevIndex = i;
+                }
+            }
+        });
+    }
+
+    private void setClickListenerForGridItem() {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Photo photo = photos.get(position);
 
-                View label1 = view.findViewById(R.id.image);
-                View label2 = view.findViewById(R.id.description_layout);
+                View vImageView = view.findViewById(R.id.image);
+                View vDescriptionLayout = view.findViewById(R.id.description_layout);
                 boolean isPhotoVisible = photo.isPhotoVisible();
                 if (isPhotoVisible) {
-                    showPhotoDescription(label1, label2);
+                    showPhotoDescription(vImageView, vDescriptionLayout);
                 } else {
-                    hidePhotoDescription(label1, label2);
+                    hidePhotoDescription(vImageView, vDescriptionLayout);
                 }
                 photo.setPhotoVisible(!isPhotoVisible);
             }
         });
     }
 
-    private void hidePhotoDescription(View label1, View label2) {
+    private void hidePhotoDescription(View view1, View view2) {
         AnimatorSet setLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(context,
                 R.animator.card_flip_left_in);
         AnimatorSet setLeftOut = (AnimatorSet) AnimatorInflater.loadAnimator(context,
                 R.animator.card_flip_left_out);
-        setLeftIn.setTarget(label1);
-        setLeftOut.setTarget(label2);
+        setLeftIn.setTarget(view1);
+        setLeftOut.setTarget(view2);
         setLeftIn.start();
         setLeftOut.start();
     }
 
-    private void showPhotoDescription(View label1, View label2) {
+    private void showPhotoDescription(View view1, View view2) {
         AnimatorSet setRightIn = (AnimatorSet) AnimatorInflater.loadAnimator(context,
                 R.animator.card_flip_right_in);
         AnimatorSet setRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(context,
                 R.animator.card_flip_right_out);
-        setRightIn.setTarget(label2);
-        setRightOut.setTarget(label1);
+        setRightIn.setTarget(view2);
+        setRightOut.setTarget(view1);
         setRightIn.start();
         setRightOut.start();
     }
