@@ -25,6 +25,8 @@ public class Photo {
     @Expose
     private String title;
 
+    private boolean isPhotoVisible = true;
+
     public String getId() {
         return id;
     }
@@ -72,6 +74,14 @@ public class Photo {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isPhotoVisible() {
+        return isPhotoVisible;
+    }
+
+    public void setPhotoVisible(boolean isPhotoVisible) {
+        this.isPhotoVisible = isPhotoVisible;
     }
 
 }

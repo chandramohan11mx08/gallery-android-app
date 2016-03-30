@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gallery.app.MainActivity;
 import com.gallery.app.R;
 import com.gallery.app.helpers.AppUtils;
 import com.gallery.app.models.Photo;
@@ -21,18 +21,18 @@ import java.util.List;
 public class GridViewAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<Photo> dataList;
+    private List<Photo> photoList;
     LayoutInflater inflater;
 
     public GridViewAdapter(Context c, List<Photo> photos) {
         mContext = c;
-        dataList = photos;
+        photoList = photos;
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return dataList.size();
+        return photoList.size();
     }
 
     @Override
@@ -52,17 +52,24 @@ public class GridViewAdapter extends BaseAdapter {
         int height = mContext.getResources().getDimensionPixelSize(R.dimen.grid_view_height);
         view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, height));
         ImageView vImageView = (ImageView) view.findViewById(R.id.image);
+        LinearLayout descriptionLayout = (LinearLayout) view.findViewById(R.id.description_layout);
         TextView vPhotoName = (TextView) view.findViewById(R.id.photo_name);
 
-        Photo photo = dataList.get(i);
+        Photo photo = photoList.get(i);
         String imageUrl = AppUtils.getImageUrl(photo);
         Picasso.with(mContext)
                 .load(imageUrl)
                 .placeholder(R.drawable.no_image)
                 .error(R.drawable.no_image)
                 .into(vImageView);
-        vImageView.setTag(MainActivity.FRONT_SIDE);
         vPhotoName.setText(photo.getTitle());
+        if(photo.isPhotoVisible()){
+            vImageView.setAlpha((float) 1);
+            descriptionLayout.setAlpha(0);
+        }else{
+            descriptionLayout.setAlpha(1);
+            vImageView.setAlpha((float) 0);
+        }
         return view;
     }
 }

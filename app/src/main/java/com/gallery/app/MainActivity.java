@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.gallery.app.adapters.GridViewAdapter;
 import com.gallery.app.constants.AppConstants;
+import com.gallery.app.models.Photo;
 import com.gallery.app.models.SearchPhotosResponse;
 import com.gallery.app.models.response.SearchPhotosResponseEvent;
 import com.gallery.app.services.FlickrApiIntentService;
@@ -20,6 +21,9 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -33,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     AnimatorSet setRightIn;
     AnimatorSet setRightOut;
 
-    public static final int FRONT_SIDE = 1;
-    public static final int BACK_SIDE = 2;
+    List<Photo> photos = new ArrayList<>();
+    GridViewAdapter gridViewAdapter;
 
     EventBus eventBus = EventBus.getDefault();
 
@@ -70,26 +74,29 @@ public class MainActivity extends AppCompatActivity {
         setRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(this,
                 R.animator.card_flip_right_out);
 
+        gridViewAdapter = new GridViewAdapter(this, photos);
+        gridView.setAdapter(gridViewAdapter);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Photo photo = photos.get(position);
 
                 View label1 = view.findViewById(R.id.image);
                 View label2 = view.findViewById(R.id.description_layout);
-                int mode = (int) label1.getTag();
-                if (mode == FRONT_SIDE) {
+                boolean isPhotoVisible = photo.isPhotoVisible();
+                if (isPhotoVisible) {
                     setRightIn.setTarget(label2);
                     setRightOut.setTarget(label1);
                     setRightIn.start();
                     setRightOut.start();
-                    label1.setTag(BACK_SIDE);
                 } else {
                     setLeftIn.setTarget(label1);
                     setLeftOut.setTarget(label2);
                     setLeftIn.start();
                     setLeftOut.start();
-                    label1.setTag(FRONT_SIDE);
                 }
+                photo.setPhotoVisible(!isPhotoVisible);
             }
         });
     }
@@ -97,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
     public void onEventMainThread(SearchPhotosResponseEvent searchPhotosResponseEvent) {
         if (searchPhotosResponseEvent.status) {
             SearchPhotosResponse searchPhotosResponse = searchPhotosResponseEvent.searchPhotosResponse;
-            GridViewAdapter gridViewAdapter = new GridViewAdapter(this, searchPhotosResponse.getPhotos().getPhoto());
-            gridView.setAdapter(gridViewAdapter);
+            photos.addAll(searchPhotosResponse.getPhotos().getPhoto());
+            gridViewAdapter.notifyDataSetChanged();
         }else{
             Toast.makeText(this, "Something went wrong",Toast.LENGTH_SHORT).show();
         }
