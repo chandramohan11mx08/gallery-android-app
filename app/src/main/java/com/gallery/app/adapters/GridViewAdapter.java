@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.gallery.app.MainActivity;
 import com.gallery.app.R;
+import com.gallery.app.models.Photo;
 
 import java.util.List;
 
@@ -18,12 +18,12 @@ import java.util.List;
 public class GridViewAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<String> dataList;
+    private List<Photo> dataList;
     LayoutInflater inflater;
 
-    public GridViewAdapter(Context c, List<String> sentDays) {
+    public GridViewAdapter(Context c, List<Photo> photos) {
         mContext = c;
-        dataList = sentDays;
+        dataList = photos;
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 

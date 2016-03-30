@@ -7,7 +7,10 @@ import com.gallery.app.FlickrServiceContract;
 import com.gallery.app.constants.AppConstants;
 import com.gallery.app.constants.UrlConstants;
 import com.gallery.app.helpers.FlickrRestServiceGenerator;
+import com.gallery.app.models.SearchPhotosResponse;
+import com.gallery.app.models.response.SearchPhotosResponseEvent;
 
+import de.greenrobot.event.EventBus;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -34,15 +37,18 @@ public class FlickrApiIntentService extends IntentService {
         String method = AppConstants.FLICKR_SEARCH_PHOTOS_API_METHOD;
         int perPage = AppConstants.PHOTOS_PER_PAGE;
         String format = AppConstants.JSON;
+        int noJsonCallBack = 1;
 
-        Call<Object> call = flickrServiceContract.getPhotos(apiKey, method, searchText, searchText, perPage, pageNumber, format);
-        call.enqueue(new Callback<Object>() {
+        Call<SearchPhotosResponse> call = flickrServiceContract.getPhotos(apiKey, method, searchText, searchText, perPage, pageNumber, format, noJsonCallBack);
+        call.enqueue(new Callback<SearchPhotosResponse>() {
             @Override
-            public void onResponse(Response<Object> response, Retrofit retrofit) {
-                Object registerMobileNumberResponse = response.body();
-                if (registerMobileNumberResponse != null) {
-//                    registerMobileNumberResponse.status = true;
-//                    EventBus.getDefault().post(registerMobileNumberResponse);
+            public void onResponse(Response<SearchPhotosResponse> response, Retrofit retrofit) {
+                SearchPhotosResponse searchPhotosResponse =  response.body();
+                if (searchPhotosResponse != null) {
+                    SearchPhotosResponseEvent searchPhotosResponseEvent = new SearchPhotosResponseEvent();
+                    searchPhotosResponseEvent.searchPhotosResponse = searchPhotosResponse;
+                    searchPhotosResponseEvent.status = true;
+                    EventBus.getDefault().post(searchPhotosResponseEvent);
                 } else {
                     broadcastError();
                 }
@@ -54,7 +60,8 @@ public class FlickrApiIntentService extends IntentService {
             }
 
             private void broadcastError() {
-
+                SearchPhotosResponseEvent searchPhotosResponseEvent = new SearchPhotosResponseEvent();
+                EventBus.getDefault().post(searchPhotosResponseEvent);
             }
         });
     }

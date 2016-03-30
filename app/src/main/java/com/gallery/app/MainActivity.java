@@ -3,6 +3,7 @@ package com.gallery.app;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,6 +11,8 @@ import android.widget.GridView;
 
 import com.gallery.app.adapters.GridViewAdapter;
 import com.gallery.app.constants.AppConstants;
+import com.gallery.app.models.SearchPhotosResponse;
+import com.gallery.app.models.response.SearchPhotosResponseEvent;
 import com.gallery.app.services.FlickrApiIntentService;
 
 import org.androidannotations.annotations.AfterViews;
@@ -17,8 +20,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
-import java.util.List;
+import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +35,20 @@ public class MainActivity extends AppCompatActivity {
     public static final int FRONT_SIDE = 1;
     public static final int BACK_SIDE = 2;
 
+    EventBus eventBus = EventBus.getDefault();
+
+    @Override
+    public void onCreate(Bundle bundle){
+        super.onCreate(bundle);
+        eventBus.register(this);
+    }
+
+    @Override
+    public void onDestroy(){
+        eventBus.unregister(this);
+        super.onDestroy();
+    }
+
     @Click(R.id.search)
     public void search() {
         Intent intent = new Intent(this, FlickrApiIntentService.class);
@@ -44,28 +60,6 @@ public class MainActivity extends AppCompatActivity {
     @AfterViews
     public void init() {
 
-        List<String> stringList = new ArrayList<>();
-        stringList.add("1");
-        stringList.add("2");
-        stringList.add("3");
-        stringList.add("4");
-        stringList.add("5");
-        stringList.add("1");
-        stringList.add("2");
-        stringList.add("3");
-        stringList.add("4");
-        stringList.add("5");
-        stringList.add("1");
-        stringList.add("2");
-        stringList.add("3");
-        stringList.add("4");
-        stringList.add("5");
-        stringList.add("1");
-        stringList.add("2");
-        stringList.add("3");
-        stringList.add("4");
-
-
         setLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(this,
                 R.animator.card_flip_left_in);
         setLeftOut = (AnimatorSet) AnimatorInflater.loadAnimator(this,
@@ -75,8 +69,6 @@ public class MainActivity extends AppCompatActivity {
         setRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(this,
                 R.animator.card_flip_right_out);
 
-        GridViewAdapter gridViewAdapter = new GridViewAdapter(this, stringList);
-        gridView.setAdapter(gridViewAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -99,5 +91,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void onEventMainThread(SearchPhotosResponseEvent searchPhotosResponseEvent) {
+        if (searchPhotosResponseEvent.status) {
+            SearchPhotosResponse searchPhotosResponse = searchPhotosResponseEvent.searchPhotosResponse;
+            GridViewAdapter gridViewAdapter = new GridViewAdapter(this, searchPhotosResponse.getPhotos().getPhoto());
+            gridView.setAdapter(gridViewAdapter);
+        }else{
+
+        }
     }
 }
