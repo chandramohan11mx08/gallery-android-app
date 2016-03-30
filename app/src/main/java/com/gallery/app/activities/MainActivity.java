@@ -2,6 +2,7 @@ package com.gallery.app.activities;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,24 +34,20 @@ public class MainActivity extends AppCompatActivity {
     @ViewById(R.id.grid_view)
     GridView gridView;
 
-    AnimatorSet setLeftIn;
-    AnimatorSet setLeftOut;
-    AnimatorSet setRightIn;
-    AnimatorSet setRightOut;
-
     List<Photo> photos = new ArrayList<>();
     GridViewAdapter gridViewAdapter;
 
     EventBus eventBus = EventBus.getDefault();
+    Context context;
 
     @Override
-    public void onCreate(Bundle bundle){
+    public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         eventBus.register(this);
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         eventBus.unregister(this);
         super.onDestroy();
     }
@@ -65,16 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     @AfterViews
     public void init() {
-
-        setLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(this,
-                R.animator.card_flip_left_in);
-        setLeftOut = (AnimatorSet) AnimatorInflater.loadAnimator(this,
-                R.animator.card_flip_left_out);
-        setRightIn = (AnimatorSet) AnimatorInflater.loadAnimator(this,
-                R.animator.card_flip_right_in);
-        setRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(this,
-                R.animator.card_flip_right_out);
-
+        context = this;
         gridViewAdapter = new GridViewAdapter(this, photos);
         gridView.setAdapter(gridViewAdapter);
 
@@ -87,19 +75,35 @@ public class MainActivity extends AppCompatActivity {
                 View label2 = view.findViewById(R.id.description_layout);
                 boolean isPhotoVisible = photo.isPhotoVisible();
                 if (isPhotoVisible) {
-                    setRightIn.setTarget(label2);
-                    setRightOut.setTarget(label1);
-                    setRightIn.start();
-                    setRightOut.start();
+                    showPhotoDescription(label1, label2);
                 } else {
-                    setLeftIn.setTarget(label1);
-                    setLeftOut.setTarget(label2);
-                    setLeftIn.start();
-                    setLeftOut.start();
+                    hidePhotoDescription(label1, label2);
                 }
                 photo.setPhotoVisible(!isPhotoVisible);
             }
         });
+    }
+
+    private void hidePhotoDescription(View label1, View label2) {
+        AnimatorSet setLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(context,
+                R.animator.card_flip_left_in);
+        AnimatorSet setLeftOut = (AnimatorSet) AnimatorInflater.loadAnimator(context,
+                R.animator.card_flip_left_out);
+        setLeftIn.setTarget(label1);
+        setLeftOut.setTarget(label2);
+        setLeftIn.start();
+        setLeftOut.start();
+    }
+
+    private void showPhotoDescription(View label1, View label2) {
+        AnimatorSet setRightIn = (AnimatorSet) AnimatorInflater.loadAnimator(context,
+                R.animator.card_flip_right_in);
+        AnimatorSet setRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(context,
+                R.animator.card_flip_right_out);
+        setRightIn.setTarget(label2);
+        setRightOut.setTarget(label1);
+        setRightIn.start();
+        setRightOut.start();
     }
 
     public void onEventMainThread(SearchPhotosResponseEvent searchPhotosResponseEvent) {
@@ -107,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
             SearchPhotosResponse searchPhotosResponse = searchPhotosResponseEvent.searchPhotosResponse;
             photos.addAll(searchPhotosResponse.getPhotos().getPhoto());
             gridViewAdapter.notifyDataSetChanged();
-        }else{
-            Toast.makeText(this, "Something went wrong",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
         }
     }
 }
