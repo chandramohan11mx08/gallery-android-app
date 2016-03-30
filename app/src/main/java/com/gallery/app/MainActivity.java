@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.gallery.app.adapters.GridViewAdapter;
 import com.gallery.app.constants.AppConstants;
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                View label1 = view.findViewById(R.id.label);
+                View label1 = view.findViewById(R.id.image);
                 View label2 = view.findViewById(R.id.description_layout);
                 int mode = (int) label1.getTag();
                 if (mode == FRONT_SIDE) {
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             GridViewAdapter gridViewAdapter = new GridViewAdapter(this, searchPhotosResponse.getPhotos().getPhoto());
             gridView.setAdapter(gridViewAdapter);
         }else{
-
+            Toast.makeText(this, "Something went wrong",Toast.LENGTH_SHORT).show();
         }
     }
 }

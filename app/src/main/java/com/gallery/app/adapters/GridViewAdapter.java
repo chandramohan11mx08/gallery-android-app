@@ -7,10 +7,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.gallery.app.MainActivity;
 import com.gallery.app.R;
+import com.gallery.app.helpers.AppUtils;
 import com.gallery.app.models.Photo;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -48,8 +51,18 @@ public class GridViewAdapter extends BaseAdapter {
         view = inflater.inflate(R.layout.grid_view_item, null);
         int height = mContext.getResources().getDimensionPixelSize(R.dimen.grid_view_height);
         view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, height));
-        ImageView textView = (ImageView) view.findViewById(R.id.label);
-        textView.setTag(MainActivity.FRONT_SIDE);
+        ImageView vImageView = (ImageView) view.findViewById(R.id.image);
+        TextView vPhotoName = (TextView) view.findViewById(R.id.photo_name);
+
+        Photo photo = dataList.get(i);
+        String imageUrl = AppUtils.getImageUrl(photo);
+        Picasso.with(mContext)
+                .load(imageUrl)
+                .placeholder(R.drawable.no_image)
+                .error(R.drawable.no_image)
+                .into(vImageView);
+        vImageView.setTag(MainActivity.FRONT_SIDE);
+        vPhotoName.setText(photo.getTitle());
         return view;
     }
 }
