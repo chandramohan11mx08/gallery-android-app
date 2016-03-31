@@ -9,12 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
 import com.gallery.app.R;
 import com.gallery.app.adapters.GridViewAdapter;
 import com.gallery.app.constants.AppConstants;
+import com.gallery.app.helpers.AppUtils;
 import com.gallery.app.models.Photo;
 import com.gallery.app.models.SearchPhotosResponse;
 import com.gallery.app.models.response.SearchPhotosResponseEvent;
@@ -32,6 +34,10 @@ import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
+
+    @ViewById(R.id.search_edit)
+    EditText vEditText;
+
     @ViewById(R.id.grid_view)
     GridView gridView;
 
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     int pageNumber = 0;
     EventBus eventBus = EventBus.getDefault();
     Context context;
+    String searchText;
 
     int prevIndex = 0;
 
@@ -57,20 +64,30 @@ public class MainActivity extends AppCompatActivity {
 
     @Click(R.id.search)
     public void search() {
+        vEditText.clearFocus();
+        AppUtils.hideKeyboard(this);
         resetSearchContext();
-        callPhotosSearchApi();
+        searchText = vEditText.getText().toString();
+
+        if (AppUtils.isNetworkAvailable()) {
+            callPhotosSearchApi();
+        } else {
+            Toast.makeText(this, "Network not available", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void resetSearchContext() {
-        photos.clear();
+        searchText = "";
         pageNumber = 1;
         prevIndex = 0;
+        photos.clear();
+        gridViewAdapter.notifyDataSetChanged();
     }
 
     public void callPhotosSearchApi() {
         Intent intent = new Intent(this, FlickrApiIntentService.class);
         intent.putExtra(AppConstants.PAGE_NUM, pageNumber);
-        intent.putExtra(AppConstants.SEARCH_TEXT, "birds");
+        intent.putExtra(AppConstants.SEARCH_TEXT, searchText);
         startService(intent);
     }
 
